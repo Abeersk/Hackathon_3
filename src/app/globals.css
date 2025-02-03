@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+background-color: #F9F9F9;
+
+}
+#footer{
+    background-color: #2b2457;
+    color:#ffffff
+}
+#hero{
+    background-color: #2A254B;
+    color:#ffffff
+}
+#btn{
+    background-color: #2A254B;
+    color:#ffffff
+}
+#btn2{
+    background-color: #f9f9f917;
+}
