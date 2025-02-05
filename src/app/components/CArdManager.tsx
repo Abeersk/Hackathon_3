@@ -126,32 +126,85 @@
 
 
                  //    2 feb sunday 
-'use client'  
+// CartManager.tsx
+'use client';
 
-import React, { useState } from 'react';
-import ProductGrid from './ProductGrid';
-import { Product } from '@/types/product.js';
-import Image from 'next/image';
+import React, { useState, useCallback } from "react";
+import Image from "next/image";
+import { Product } from "@/types/product";
+import { getCart, removeFromCart, updateCart } from "../actions/actions";
+import Swal from "sweetalert2";
+import { ProductGrid } from "@/app/components/ProductDisplay";
 
-const CartManager = ({ products }: { products: Product[] }) => {
-  const [cart, setCart] = useState<Product[]>([]);
+const CartManager = React.memo(({ products }: { products: Product[] }) => {
+  const [cartItems, setCartItems] = useState<Product[]>(getCart());
 
-  const handleAddToCart = (product: Product) => {
-    setCart((prevProduct) => [...prevProduct, product]);
-  };
+  const handleRemove = useCallback((id: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this item",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeFromCart(id);
+        setCartItems(getCart());
+        Swal.fire("Removed!", "Item has been removed.", "success");
+      }
+    });
+  }, []);
 
-  const handleRemoveFromCart = (product_id: string) => {
-    const newData = cart.filter((item) => item._id !== product_id);
-    setCart(newData);
-  };
+  const handleQuantityChange = useCallback((id: string, quantity: number) => {
+    updateCart(id, quantity);
+    setCartItems(getCart());
+  }, []);
+
+  const handleIncrement = useCallback(
+    (id: string) => {
+      const product = cartItems.find((item) => item._id === id);
+      if (product) {
+        handleQuantityChange(id, product.quantity + 1);
+      }
+    },
+    [cartItems, handleQuantityChange]
+  );
+
+  const handleDecrement = useCallback(
+    (id: string) => {
+      const product = cartItems.find((item) => item._id === id);
+      if (product && product.quantity > 1) {
+        handleQuantityChange(id, product.quantity - 1);
+      }
+    },
+    [cartItems, handleQuantityChange]
+  );
+
+  const handleAddToCart = useCallback(
+    (product: Product) => {
+      const existingProduct = cartItems.find((item) => item._id === product._id);
+      if (existingProduct) {
+        handleQuantityChange(product._id, existingProduct.quantity + 1);
+      } else {
+        const updatedCart = [...cartItems, { ...product, quantity: 1 }];
+        setCartItems(updatedCart);
+      }
+    },
+    [cartItems, handleQuantityChange]
+  );
 
   return (
     <>
       <div className="container mx-auto my-8">
         {/* Cart Items */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cart.map((item: Product) => (
-            <div key={item._id} className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow">
+          {cartItems.map((item: Product) => (
+            <div
+              key={item._id}
+              className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow"
+            >
               <div className="flex items-center gap-4">
                 <Image
                   src={item.imageUrl}
@@ -159,16 +212,34 @@ const CartManager = ({ products }: { products: Product[] }) => {
                   width={50}
                   height={50}
                   className="rounded-md shadow-sm"
+                  loading="lazy"
                 />
                 <div>
                   <h3 className="font-medium text-gray-800">{item.name}</h3>
-                  <p className="text-sm text-gray-600">{item.description.substring(0, 50)}...</p>
+                  <p className="text-sm text-gray-600">
+                    {item.description.substring(0, 50)}...
+                  </p>
                 </div>
               </div>
               <div className="mt-4 flex justify-between items-center">
-                <span className="text-gray-800">${item.price}</span>
+                <div className="flex gap-4 items-center">
+                  <button
+                    onClick={() => handleDecrement(item._id)}
+                    className="px-2 py-1 bg-gray-200 text-gray-800 rounded"
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    onClick={() => handleIncrement(item._id)}
+                    className="px-2 py-1 bg-gray-200 text-gray-800 rounded"
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="text-gray-800">£{item.price * item.quantity}</span>
                 <button
-                  onClick={() => handleRemoveFromCart(item._id)}
+                  onClick={() => handleRemove(item._id)}
                   className="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 transition"
                 >
                   Remove
@@ -188,15 +259,27 @@ const CartManager = ({ products }: { products: Product[] }) => {
           <h2 className="text-lg font-semibold mb-4">Customer Information</h2>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input type="text" name="name" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+            <input
+              type="text"
+              name="name"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+            <input
+              type="email"
+              name="email"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            />
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">Phone</label>
-            <input type="phone" name="phone" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm" />
+            <input
+              type="phone"
+              name="phone"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+            />
           </div>
           <button className="w-full py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition">
             Submit Order
@@ -204,11 +287,11 @@ const CartManager = ({ products }: { products: Product[] }) => {
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid with products list */}
       <ProductGrid products={products} addToCart={handleAddToCart} />
     </>
   );
-};
+});
 
 export default CartManager;
 

@@ -72,82 +72,167 @@
 //     </div>
 //   );
 // }
-'use client'
-import { sanityFetch } from "@/sanity/lib/client";
-import { allProducts } from "@/sanity/lib/queries";
-import { product } from "@/sanity/schemaTypes/product";
-import Image from "next/image";
-import Link from "next/link";
-import head from '@/public/all-products.jpg'
-import { useEffect, useState } from "react";
 
-type Product = {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
-};
 
-export default function Listings() {
-  // States for products and loading
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+// 'use client'
+// import { sanityFetch } from "@/sanity/lib/client";
+// import { allProducts } from "@/sanity/lib/queries";
+// import { product } from "@/sanity/schemaTypes/product";
+// import Image from "next/image";
+// import Link from "next/link";
+// import head from '@/public/all-products.jpg'
+// import { useEffect, useState } from "react";
 
-  const fetchProducts = async () => {
-    const fetchedProducts: Product[] = await sanityFetch({ query: allProducts });
-    setProducts(fetchedProducts);
-    setLoading(false); // Set loading to false after fetching
-  };
+// type Product = {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   price: number;
+//   imageUrl: string;
+// };
 
-  // Fetch products on initial load
-  useEffect(() => {
-    fetchProducts();
-  }, []);
+// export default function Listings() {
+//   // States for products and loading
+//   const [products, setProducts] = useState<Product[]>([]);
+//   const [loading, setLoading] = useState(true);
 
-  return (
-    <div className="bg-gray-50 min-h-screen">
-      {/* Top Section with Image */}
-      <div className="w-full h-32 relative">
-        <Image
-          src={head} // Update with actual image URL or path
-          alt="All Products"
-          layout="fill"
-          objectFit="cover"
-          className="rounded-lg"
-        />
-        <h1 className="absolute left-12 font-serif bottom-10 text-4xl text-white">
-          All Products
-        </h1>
-      </div>
+//   const fetchProducts = async () => {
+//     const fetchedProducts: Product[] = await sanityFetch({ query: allProducts });
+//     setProducts(fetchedProducts);
+//     setLoading(false); // Set loading to false after fetching
+//   };
+
+//   // Fetch products on initial load
+//   useEffect(() => {
+//     fetchProducts();
+//   }, []);
+
+//   return (
+//     <div className="bg-gray-50 min-h-screen">
+//       {/* Top Section with Image */}
+//       <div className="w-full h-32 relative">
+//         <Image
+//           src={head} // Update with actual image URL or path
+//           alt="All Products"
+//           layout="fill"
+//           objectFit="cover"
+//           className="rounded-lg"
+//         />
+//         <h1 className="absolute left-12 font-serif bottom-10 text-4xl text-white">
+//           All Products
+//         </h1>
+//       </div>
 
      
 
-      {/* Loading Indicator */}
-      {loading ? (
-        <div className="flex justify-center items-center min-h-screen">
-          <div className="text-2xl">Loading...</div>
-        </div>
-      ) : (
-        // Products Grid
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-12">
-          {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
+//       {/* Loading Indicator */}
+//       {loading ? (
+//         <div className="flex justify-center items-center min-h-screen">
+//           <div className="text-2xl">Loading...</div>
+//         </div>
+//       ) : (
+//         // Products Grid
+//         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-12">
+//           {products.map((product) => (
+//             <ProductCard key={product._id} product={product} />
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 
-// Product Card Component
-function ProductCard({ product }: { product: Product }) {
+// // Product Card Component
+// function ProductCard({ product }: { product: Product }) {
+//   const [showDescription, setShowDescription] = useState(false);
+
+//   return (
+//     <Link href={`/Product/${product._id}`} passHref>
+//       <div className="rounded-lg bg-white shadow-lg group hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer">
+//         {/* Product Image */}
+//         <div className="relative h-48 overflow-hidden">
+//           <Image
+//             src={product.imageUrl}
+//             alt={product.name}
+//             layout="fill"
+//             objectFit="cover"
+//             className="group-hover:scale-110 transition-transform duration-500"
+//           />
+//         </div>
+//         {/* Product Details */}
+//         <div className="p-4 text-center">
+//           <h2 className="text-gray-900 text-lg font-semibold group-hover:text-blue-600 transition-colors duration-300">
+//             {product.name}
+//           </h2>
+//           {/* Description with "See More" */}
+//           <p className="mt-2 text-sm text-gray-600">
+//             {showDescription ? (
+//               <>
+//                 {product.description}{" "}
+//                 <span
+//                   className="text-blue-500 cursor-pointer"
+//                   onClick={() => setShowDescription(false)}
+//                 >
+//                   See Less
+//                 </span>
+//               </>
+//             ) : (
+//               <>
+//                 {product.description.slice(0, 50)}...
+//                 <span
+//                   className="text-blue-500 cursor-pointer"
+//                   onClick={() => setShowDescription(true)}
+//                 >
+//                   See More
+//                 </span>
+//               </>
+//             )}
+//           </p>
+//           <p className="mt-4 text-lg font-bold text-gray-900">£{product.price}</p>
+//           {/* Buttons */}
+//           <div className="mt-4 flex justify-center gap-4">
+//             <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300">
+//               Buy Now
+//             </button>
+//             <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300">
+//               Add to Cart
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </Link>
+//   );
+// }
+
+
+
+'use client';
+
+import React, { useEffect, useState, useCallback } from "react"; // Import React here
+import { sanityFetch } from "@/sanity/lib/client";
+import { allProducts } from "@/sanity/lib/queries";
+import Image from "next/image";
+import Link from "next/link";
+import head from "@/public/all-products.jpg";
+import { Product } from "@/types/product";
+import Swal from "sweetalert2";
+import { addTOCart } from "../actions/actions";
+import Navbar from "../components/Navbar";
+
+// ProductCard Component with React.memo and lazy loading
+const ProductCard = React.memo(({
+  product,
+  handleCart,
+}: {
+  product: Product;
+  handleCart: (e: React.MouseEvent, product: Product) => void;
+}) => {
   const [showDescription, setShowDescription] = useState(false);
 
   return (
     <Link href={`/Product/${product._id}`} passHref>
       <div className="rounded-lg bg-white shadow-lg group hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer">
-        {/* Product Image */}
+        {/* Product Image with lazy loading */}
         <div className="relative h-48 overflow-hidden">
           <Image
             src={product.imageUrl}
@@ -155,6 +240,7 @@ function ProductCard({ product }: { product: Product }) {
             layout="fill"
             objectFit="cover"
             className="group-hover:scale-110 transition-transform duration-500"
+            loading="lazy" // Lazy load images
           />
         </div>
         {/* Product Details */}
@@ -162,7 +248,6 @@ function ProductCard({ product }: { product: Product }) {
           <h2 className="text-gray-900 text-lg font-semibold group-hover:text-blue-600 transition-colors duration-300">
             {product.name}
           </h2>
-          {/* Description with "See More" */}
           <p className="mt-2 text-sm text-gray-600">
             {showDescription ? (
               <>
@@ -187,17 +272,109 @@ function ProductCard({ product }: { product: Product }) {
             )}
           </p>
           <p className="mt-4 text-lg font-bold text-gray-900">£{product.price}</p>
-          {/* Buttons */}
-          <div className="mt-4 flex justify-center gap-4">
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300">
+          {/* Buttons in Upper-Lower Format */}
+          <div className="mt-4 flex flex-col gap-3">
+            <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
               Buy Now
             </button>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300">
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full text-sm sm:text-base"
+              onClick={(e) => handleCart(e, product)}
+            >
               Add to Cart
             </button>
           </div>
         </div>
       </div>
     </Link>
+  );
+});
+// ProductGrid Component with responsive grid
+const ProductGrid = React.memo(({
+  products,
+  addToCart,
+}: {
+  products: Product[];
+  addToCart: (product: Product) => void;
+}) => {
+  return (
+    <div className="w-[95%] sm:w-[90%] md:w-[85%] lg:w-[90%] xl:w-[75%] 2xl:w-[70%] m-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+      {products.map((product) => (
+        <ProductCard
+          key={product._id}
+          product={product}
+          handleCart={(e, p) => {
+            e.preventDefault(); // Prevents default Link behavior
+            addToCart(p);
+          }}
+        />
+      ))}
+    </div>
+  );
+});
+  
+
+
+// Listings Page Component
+export default function Listings() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProducts = useCallback(async () => {
+    const fetchedProducts: Product[] = await sanityFetch({ query: allProducts });
+    setProducts(fetchedProducts);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Add to Cart with Swal Alert and localStorage update using addTOCart
+  const handleAddToCart = useCallback((product: Product) => {
+    Swal.fire({
+      title: "Add to Cart?",
+      text: `Do you want to add "${product.name}" to the cart?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, add it!",
+      cancelButtonText: "No, cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        addTOCart(product); // Update localStorage cart
+        Swal.fire("Added!", `"${product.name}" has been added to the cart.`, "success");
+      }
+    });
+  }, []);
+
+  return (
+    <div className="bg-gray-50 min-h-screen">
+      <Navbar />
+      {/* Top Section with Header Image */}
+      <div className="w-full h-32 relative">
+        <Image
+          src={head}
+          alt="All Products"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-lg"
+          priority // Prioritize loading the header image
+        />
+        <h1 className="absolute left-12 font-serif bottom-10 text-4xl text-white">
+          All Products
+        </h1>
+      </div>
+
+      {/* Loading Indicator or Product Grid */}
+      {loading ? (
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="text-2xl">Loading...</div>
+        </div>
+      ) : (
+        <ProductGrid products={products} addToCart={handleAddToCart} />
+      )}
+    </div>
   );
 }

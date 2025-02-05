@@ -1,11 +1,34 @@
-'use client'
+'use client';
 
-import Link from "next/link";
-import { IoSearch } from "react-icons/io5";
-import { MdOutlineShoppingCart } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { IoSearch } from 'react-icons/io5';
+import { MdOutlineShoppingCart } from 'react-icons/md';
+import { CgProfile } from 'react-icons/cg';
 
 const Header = () => {
+  const [cartCount, setCartCount] = useState(0);
+
+  // Function to update cart count
+  const updateCartCount = () => {
+    const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    const totalQuantity = cartItems.reduce((total: number, item: any) => total + item.quantity, 0);
+    setCartCount(totalQuantity);
+  };
+
+  // Update cart count on component mount and cart changes
+  useEffect(() => {
+    updateCartCount(); // Initial cart count update
+
+    // Listen for custom 'cartUpdated' event
+    const handleCartUpdate = () => {
+      updateCartCount();
+    };
+
+    window.addEventListener('cartUpdated', handleCartUpdate);
+    return () => window.removeEventListener('cartUpdated', handleCartUpdate);
+  }, []);
+
   return (
     <>
       <header className="max-w-[1440px] mx-auto w-full bg-[#FFFFFF] px-4 md:px-10">
@@ -23,8 +46,13 @@ const Header = () => {
 
           {/* Cart and Profile Icons */}
           <div className="flex items-center gap-6 text-2xl mt-4 md:mt-0">
-            <Link href="/shopping-baskets">
+            <Link href="/shopping-baskets" className="relative">
               <MdOutlineShoppingCart />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link href="#email">
               <CgProfile />
