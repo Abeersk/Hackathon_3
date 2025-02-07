@@ -47,7 +47,7 @@ const ProductCard = React.memo(({ product, handleCart }: { product: Product; han
           <p className="mt-4 text-lg font-bold text-gray-900">£{product.price}</p>
           <div className="mt-4 flex flex-col gap-3">
             <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
-              Buy Now
+          View Details
             </button>
             <button className="px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full text-sm sm:text-base" onClick={(e) => handleCart(e, product)}>
               Add to Cart
