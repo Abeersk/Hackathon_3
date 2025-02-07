@@ -43,3 +43,14 @@ export const singleProductQuery = defineQuery(
   }
   `
 );
+// allProductsByCategory.js
+export const allProductsByCategory = (categorySlug: string) => ({
+  query: `*[_type == "product" && category->slug.current == $categorySlug] {
+    _id,
+    name,
+    price,
+    "imageUrl": image.asset->url,
+    description
+  }`,
+  params: { categorySlug },
+});

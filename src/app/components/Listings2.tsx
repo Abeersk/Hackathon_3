@@ -1,138 +1,96 @@
-// import React from 'react';
-// import Image from 'next/image';
+'use client';
 
-// import pic3 from '@/public/pic3.jpeg';
-// import features2 from '@/public/features2.jpeg';
-// import pic2 from '@/public/pic2.jpeg';
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Swal from 'sweetalert2';
+import { sanityFetch } from '@/sanity/lib/client';
+import { allProducts } from '@/sanity/lib/queries';
+import { addTOCart } from '../actions/actions';
+import { Product } from '@/types/product';
 
-// const imageData = [
-//   {
-//     src: pic3,
-//     alt: 'Hero Image',
-//     title: 'The Dandy Chair',
-//     price: '£250',
-//   },
-//   {
-//     src: features2,
-//     alt: 'Feature 2 Image',
-//     title: 'The Silky Vase',
-//     price: '£125',
-//   },
-//   {
-//     src: pic2,
-//     alt: 'Pic 2 Image',
-//     title: 'The Lucy Lamp',
-//     price: '£399',
-//   },
-// ];
+const Listings2 = React.memo(() => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// const Listings2 = () => {
-//   return (
-//     <section id="listings2" className="text-gray-600 body-font">
-//       <div className="container px-5 py-24 mx-auto">
-//         <div className="flex flex-wrap -m-4">
-//           {imageData.map((item, index) => (
-//             <div
-//               key={index}
-//               className={`${
-//                 index === 0 ? 'lg:w-1/2' : 'lg:w-1/4'
-//               } md:w-1/2 sm:w-full w-full p-4 group`}
-//             >
-//               {/* Parent div for hover effect */}
-//               <div className="block relative rounded overflow-hidden bg-white shadow group-hover:shadow-lg transition-shadow duration-300">
-//                 <a className="block relative h-96">
-//                   <Image
-//                     src={item.src}
-//                     alt={item.alt}
-//                     layout="fill"
-//                     objectFit="cover"
-//                     className="absolute group-hover:scale-105 transition-transform duration-300"
-//                   />
-//                 </a>
-//                 <div className="mt-4 text-center group-hover:text-gray-700 transition-colors duration-300">
-//                   <h2 className="text-gray-900 title-font text-lg font-medium group-hover:font-bold">
-//                     {item.title}
-//                   </h2>
-//                   <p className="mt-1">{item.price}</p>
-//                 </div>
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await sanityFetch({ query: allProducts });
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
-// export default Listings2;
+  const handleAddToCart = (product: Product) => {
+    Swal.fire({
+      title: 'Added to Cart!',
+      text: `${product.name} has been added to your cart.`,
+      icon: 'success',
+      position: 'top-start',
+      showConfirmButton: false,
+      timer: 1500
+    });
+    addTOCart(product);
+  };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <div className="text-2xl font-semibold mb-2">Loading...</div>
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
-       // 4 feb
+  return (
+    <section id="listings2" className="text-gray-600 body-font">
+      <div className="container px-5 py-24 mx-auto">
+        <div className="flex flex-wrap -m-4">
+          {products.slice(0, 3).map((product, index) => (
+            <div
+              key={product._id}
+              className={`${
+                index === 0 ? 'lg:w-1/2' : 'lg:w-1/4'
+              } md:w-1/2 sm:w-full w-full p-4 group`}
+            >
+              <div className="block relative rounded-lg overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300">
+                <Link href={`/Product/${product._id}`} passHref>
+                  <div className="block relative h-96 cursor-pointer">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      layout="fill"
+                      objectFit="cover"
+                      className="absolute group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </div>
+                </Link>
+                <div className="mt-4 text-center">
+                  <h2 className="text-gray-900 title-font text-lg font-semibold group-hover:font-bold transition-all duration-300">
+                    {product.name}
+                  </h2>
+                  <p className="mt-1 text-gray-700 font-medium">£{product.price}</p>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-4 px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-indigo-700 transition-colors duration-300"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+});
 
-       import React from 'react';
-       import Image from 'next/image';
-       
-       import pic3 from '@/public/pic3.jpeg';
-       import features2 from '@/public/features2.jpeg';
-       import pic2 from '@/public/pic2.jpeg';
-       
-       const imageData = [
-         {
-           src: pic3,
-           alt: 'Hero Image',
-           title: 'The Dandy Chair',
-           price: '£250',
-         },
-         {
-           src: features2,
-           alt: 'Feature 2 Image',
-           title: 'The Silky Vase',
-           price: '£125',
-         },
-         {
-           src: pic2,
-           alt: 'Pic 2 Image',
-           title: 'The Lucy Lamp',
-           price: '£399',
-         },
-       ];
-       
-       const Listings2 = React.memo(() => {
-         return (
-           <section id="listings2" className="text-gray-600 body-font">
-             <div className="container px-5 py-24 mx-auto">
-               <div className="flex flex-wrap -m-4">
-                 {imageData.map((item, index) => (
-                   <div
-                     key={index}
-                     className={`${
-                       index === 0 ? 'lg:w-1/2' : 'lg:w-1/4'
-                     } md:w-1/2 sm:w-full w-full p-4 group`}
-                   >
-                     <div className="block relative rounded overflow-hidden bg-white shadow group-hover:shadow-lg transition-shadow duration-300">
-                       <a className="block relative h-96">
-                         <Image
-                           src={item.src}
-                           alt={item.alt}
-                           layout="fill"
-                           objectFit="cover"
-                           className="absolute group-hover:scale-105 transition-transform duration-300"
-                           loading="lazy" // Lazy load images
-                         />
-                       </a>
-                       <div className="mt-4 text-center group-hover:text-gray-700 transition-colors duration-300">
-                         <h2 className="text-gray-900 title-font text-lg font-medium group-hover:font-bold">
-                           {item.title}
-                         </h2>
-                         <p className="mt-1">{item.price}</p>
-                       </div>
-                     </div>
-                   </div>
-                 ))}
-               </div>
-             </div>
-           </section>
-         );
-       });
-       
-       export default Listings2;
+export default Listings2;

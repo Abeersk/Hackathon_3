@@ -4,13 +4,10 @@ import Listings from '../components/Listings';
 import Email from '../components/Email';
 import Image from 'next/image';
 import product from '@/public/product.png';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
 
 const Pag = () => {
   return (
     <div>
-      <Navbar />
 
       <section className="text-gray-600 body-font">
         <div className="py-12 mx-auto flex flex-col lg:flex-row items-center">
@@ -78,7 +75,6 @@ const Pag = () => {
       <Features />
       <Listings />
       <Email />
-      <Footer />
     </div>
   );
 };
