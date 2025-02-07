@@ -92,5 +92,5 @@ const Listings2 = React.memo(() => {
     </section>
   );
 });
-
+Listings2.displayName = "Listings2"
 export default Listings2;
