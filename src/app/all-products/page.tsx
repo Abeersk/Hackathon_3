@@ -1,19 +1,16 @@
-'use client';
-
-import React, { useEffect, useState, useCallback } from "react";
+'use client'
+import { useState, useEffect, useCallback } from "react";
 import { sanityFetch } from "@/sanity/lib/client";
 import { allProducts } from "@/sanity/lib/queries";
 import Image from "next/image";
 import Link from "next/link";
-import head from "@/public/all-products.jpg";
-import { Product } from "@/types/product";
 import Swal from "sweetalert2";
 import { addTOCart } from "../actions/actions";
+import { Product } from "@/types/product";
+import Pagination from "@/app/components/Pagination"; // Import Pagination Component
+import head from "@/public/all-products.jpg";
 
-// ProductCard Component with React.memo and lazy loading
-const ProductCard = React.memo(({ product, handleCart }: { product: Product; handleCart: (e: React.MouseEvent, product: Product) => void; }) => {
-  const [showDescription, setShowDescription] = useState(false);
-
+const ProductCard = ({ product, handleCart }: { product: Product; handleCart: (e: React.MouseEvent, product: Product) => void; }) => {
   return (
     <Link href={`/Product/${product._id}`} passHref>
       <div className="rounded-lg bg-white shadow-lg group hover:shadow-2xl transition-shadow duration-300 overflow-hidden cursor-pointer">
@@ -32,55 +29,36 @@ const ProductCard = React.memo(({ product, handleCart }: { product: Product; han
             {product.name}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {showDescription ? (
-              <>
-                {product.description} {" "}
-                <span className="text-blue-500 cursor-pointer" onClick={() => setShowDescription(false)}>See Less</span>
-              </>
-            ) : (
-              <>
-                {product.description.slice(0, 50)}...
-                <span className="text-blue-500 cursor-pointer" onClick={() => setShowDescription(true)}>See More</span>
-              </>
-            )}
+            {product.description.slice(0, 50)}...
           </p>
           <p className="mt-4 text-lg font-bold text-gray-900">£{product.price}</p>
-          <div className="mt-4 flex flex-col gap-3">
-            <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
-          View Details
-            </button>
-            <button className="px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full text-sm sm:text-base" onClick={(e) => handleCart(e, product)}>
-              Add to Cart
-            </button>
-          </div>
+          <button
+            className="mt-4 px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full text-sm sm:text-base"
+            onClick={(e) => handleCart(e, product)}
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
     </Link>
   );
-});
-ProductCard.displayName = "ProductCard";
+};
 
-const ProductGrid = React.memo(({ products, addToCart }: { products: Product[]; addToCart: (product: Product) => void; }) => {
+const ProductGrid = ({ products, addToCart }: { products: Product[]; addToCart: (product: Product) => void; }) => {
   return (
-    <div className="w-[95%] sm:w-[90%] md:w-[85%] lg:w-[90%] xl:w-[75%] 2xl:w-[70%] m-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-12 w-[90%] mx-auto">
       {products.map((product) => (
-        <ProductCard
-          key={product._id}
-          product={product}
-          handleCart={(e, p) => {
-            e.preventDefault();
-            addToCart(p);
-          }}
-        />
+        <ProductCard key={product._id} product={product} handleCart={(e, p) => { e.preventDefault(); addToCart(p); }} />
       ))}
     </div>
   );
-});
-ProductGrid.displayName = "ProductGrid";
+};
 
 export default function Listings() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // Number of products per page
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -109,19 +87,27 @@ export default function Listings() {
     });
   }, []);
 
+  // **Pagination Logic**
+  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="w-full h-32 relative">
         <Image src={head} alt="All Products" layout="fill" objectFit="cover" className="rounded-lg" priority />
         <h1 className="absolute left-12 font-serif bottom-10 text-4xl text-white">All Products</h1>
       </div>
+
       {loading ? (
         <div className="flex justify-center items-center min-h-screen">
           <div className="text-2xl">Loading...</div>
           <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin"></div>
         </div>
       ) : (
-        <ProductGrid products={products} addToCart={handleAddToCart} />
+        <>
+          <ProductGrid products={paginatedProducts} addToCart={handleAddToCart} />
+          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+        </>
       )}
     </div>
   );

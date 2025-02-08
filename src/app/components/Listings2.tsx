@@ -59,37 +59,44 @@ const Listings2 = React.memo(() => {
                 index === 0 ? 'lg:w-1/2' : 'lg:w-1/4'
               } md:w-1/2 sm:w-full w-full p-4 group`}
             >
-                <Link href={`/Product/${product._id}`} passHref>
               <div className="block relative rounded-lg overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300">
-                  <div className="block relative h-96 cursor-pointer">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="absolute group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
+                {/* Image and Title wrapped in Link */}
+                <Link href={`/Product/${product._id}`} passHref>
+                  <div className="cursor-pointer">
+                    <div className="block relative h-96">
+                      <Image
+                        src={product.imageUrl}
+                        alt={product.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="absolute group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="mt-4 text-center">
+                      <h2 className="text-gray-900 title-font text-lg font-semibold group-hover:font-bold transition-all duration-300">
+                        {product.name}
+                      </h2>
+                      <p className="mt-1 text-gray-700 font-medium">£{product.price}</p>
+                    </div>
                   </div>
-                <div className="mt-4 text-center">
-                  <h2 className="text-gray-900 title-font text-lg font-semibold group-hover:font-bold transition-all duration-300">
-                    {product.name}
-                  </h2>
-                  <p className="mt-1 text-gray-700 font-medium">£{product.price}</p>
-                  <div className="p-4 flex flex-col gap-3">
-              <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
-          View Details
-            </button>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full"
+                </Link>
+
+                {/* Buttons */}
+                <div className="p-4 flex flex-col gap-3">
+                  <Link href={`/Product/${product._id}`} passHref>
+                    <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
+                      View Details
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full"
                   >
-                  Add to Cart
-                </button>
-              </div>
+                    Add to Cart
+                  </button>
                 </div>
               </div>
-                    </Link>
             </div>
           ))}
         </div>
@@ -97,5 +104,5 @@ const Listings2 = React.memo(() => {
     </section>
   );
 });
-Listings2.displayName = "Listings2"
+Listings2.displayName = "Listings2";
 export default Listings2;

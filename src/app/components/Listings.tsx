@@ -57,7 +57,7 @@ const Listings = React.memo(() => {
           New Ceramics
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.slice(1,9).map((product) => (
+          {products.slice(1, 9).map((product) => (
             <div
               key={product._id}
               className="group rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden"
@@ -81,18 +81,20 @@ const Listings = React.memo(() => {
                     <p className="mt-1 text-gray-600">£{product.price}</p>
                   </div>
                 </div>
+              </Link>
               <div className="p-4 flex flex-col gap-3">
-              <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
-          View Details
-            </button>
+                <Link href={`/Product/${product._id}`} passHref>
+                  <button className="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition-colors duration-300 w-full text-sm sm:text-base">
+                    View Details
+                  </button>
+                </Link>
                 <button
                   onClick={() => handleAddToCart(product)}
                   className="px-4 py-2 bg-indigo-950 text-white rounded-lg shadow hover:bg-blue-600 transition-colors duration-300 w-full"
-                  >
+                >
                   Add to Cart
                 </button>
               </div>
-          </Link>
             </div>
           ))}
         </div>
@@ -100,5 +102,6 @@ const Listings = React.memo(() => {
     </section>
   );
 });
-Listings.displayName = "Listings";
+
+Listings.displayName = 'Listings';
 export default Listings;
