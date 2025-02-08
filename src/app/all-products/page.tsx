@@ -58,7 +58,7 @@ export default function Listings() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8; // Number of products per page
+  const itemsPerPage = 12; // Number of products per page
 
   useEffect(() => {
     const fetchProducts = async () => {
