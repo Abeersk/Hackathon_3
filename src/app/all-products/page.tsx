@@ -109,6 +109,7 @@ export default function Listings() {
           <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </>
       )}
+      
     </div>
   );
 }
